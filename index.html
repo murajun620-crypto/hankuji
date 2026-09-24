@@ -6,14 +6,14 @@
     <meta name="theme-color" content="#f6f3ec">
     <meta name="description" content="授業ごとに発表班を公平に抽選する、シンプルなブラウザアプリ。">
     <title>班くじ | 発表班の抽選</title>
-    <link rel="stylesheet" href="./styles.css?v=20260924-3">
-    <link rel="stylesheet" href="./presentation.css?v=20260924-3">
-    <script type="module" src="./src/app.js?v=20260924-3"></script>
+    <link rel="stylesheet" href="./styles.css?v=20260924-4">
+    <link rel="stylesheet" href="./presentation.css?v=20260924-4">
+    <script type="module" src="./src/app.js?v=20260924-4"></script>
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="./" aria-label="班くじ ホーム"><span class="brand-mark">✳</span><span>班くじ</span></a>
+        <a class="brand" href="./" aria-label="班くじ ホーム">班くじ</a>
         <span class="topbar-caption">発表する班を、気持ちよく決めよう。</span>
         <button class="icon-button mobile-menu" id="mobile-projects" type="button" aria-label="プロジェクト一覧を開く">☰</button>
       </header>
@@ -23,28 +23,27 @@
           <div class="sidebar-heading"><span>MY PROJECTS</span><button class="small-icon-button" id="new-project" type="button" aria-label="プロジェクトを追加">＋</button></div>
           <nav id="project-list" class="project-list" aria-label="プロジェクト一覧"></nav>
           <p class="sidebar-note">授業と年度ごとに設定・履歴を保存します。</p>
-          <div class="sidebar-bottom"><span class="status-dot"></span> データはこのブラウザに保存</div>
+          <div class="sidebar-bottom">データはこのブラウザに保存</div>
         </aside>
 
         <main class="main-content" id="main-content">
           <section class="empty-state" id="empty-state" hidden>
-            <div class="empty-illustration" aria-hidden="true">✳</div>
             <p class="eyebrow">WELCOME TO 班くじ</p>
             <h1>まずは授業を登録しましょう。</h1>
             <p>授業と年度ごとに、抽選設定と指名履歴を分けて管理できます。</p>
-            <button class="primary-button" id="empty-create" type="button">最初のプロジェクトを作成 <span>→</span></button>
+            <button class="primary-button" id="empty-create" type="button">最初のプロジェクトを作成</button>
           </section>
 
           <div id="project-workspace" hidden>
             <div class="page-heading">
               <div><p class="eyebrow">PRESENTATION LOTTERY</p><h1 id="project-title"></h1><p class="project-subtitle" id="project-subtitle"></p></div>
-              <div class="page-actions"><button class="text-button" id="edit-project" type="button">プロジェクト名を編集 <span aria-hidden="true">↗</span></button><button class="presentation-button" id="student-view" type="button" aria-pressed="false">▣ 学生表示</button></div>
+              <div class="page-actions"><button class="text-button" id="edit-project" type="button">プロジェクト名を編集</button><button class="presentation-button" id="student-view" type="button" aria-pressed="false">抽選ボード</button></div>
             </div>
 
             <div class="content-grid">
               <div class="primary-column">
                 <section class="lottery-card" id="lottery-card" aria-label="抽選ボード">
-                  <div class="card-topline"><span class="pill"><span class="live-dot"></span> <span id="board-label">抽選ボード</span></span><button class="history-link" id="open-history" type="button">履歴を見る <span aria-hidden="true">↗</span></button><button class="presentation-exit" id="exit-student-view" type="button" aria-label="先生画面に戻る" hidden>× <span>先生画面へ</span></button></div>
+                  <div class="card-topline"><span class="pill" id="board-label">抽選ボード</span><button class="history-link" id="open-history" type="button">履歴を見る</button><button class="presentation-exit" id="exit-student-view" type="button" aria-label="管理画面に戻る" hidden>管理画面</button></div>
                   <div class="lottery-center">
                     <div class="orbit orbit-one" aria-hidden="true"></div><div class="orbit orbit-two" aria-hidden="true"></div>
                     <div class="result-content">
@@ -53,7 +52,7 @@
                       <p class="result-description" id="result-description">ボタンを押して発表班を決めましょう</p>
                     </div>
                   </div>
-                  <div class="lottery-actions"><button class="draw-button" id="draw-button" type="button"><span class="draw-icon" aria-hidden="true">✳</span><span id="draw-button-label">抽選する</span><span aria-hidden="true">→</span></button><p id="draw-hint" class="draw-hint"></p></div>
+                  <div class="lottery-actions"><button class="draw-button" id="draw-button" type="button"><span id="draw-button-label">抽選する</span></button><p id="draw-hint" class="draw-hint"></p></div>
                 </section>
 
                 <section class="groups-section" aria-labelledby="groups-title">
@@ -63,7 +62,7 @@
               </div>
 
               <aside class="settings-card" aria-labelledby="settings-title">
-                <div class="settings-header"><div class="settings-icon" aria-hidden="true">⚙</div><div><p class="eyebrow">SETTINGS</p><h2 id="settings-title">抽選の設定</h2></div></div>
+                <div class="settings-header"><div><p class="eyebrow">SETTINGS</p><h2 id="settings-title">抽選の設定</h2></div></div>
                 <div class="settings-body">
                   <div class="field"><label for="group-count">班の数</label><div class="number-stepper"><button id="count-decrease" type="button" aria-label="班の数を減らす">−</button><input id="group-count" type="number" min="1" max="52" inputmode="numeric"><button id="count-increase" type="button" aria-label="班の数を増やす">＋</button></div><p class="field-help">1〜52班まで設定できます</p></div>
                   <div class="field"><label for="name-pattern">班の名称</label><select id="name-pattern"><option value="letters">A / B / C</option><option value="numbers">1 / 2 / 3</option><option value="numbered">第1班 / 第2班 / 第3班</option><option value="custom">自由入力</option></select><p class="field-help">表示方法を選んでください</p></div>

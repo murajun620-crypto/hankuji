@@ -8,14 +8,14 @@
   border: 0;
   border-radius: 9px;
   padding: 11px 17px;
-  background: #343c34;
+  background: #37393a;
   color: white;
   font-size: 12px;
   font-weight: 800;
   white-space: nowrap;
 }
 
-.presentation-button:hover { background: #4c594d; }
+.presentation-button:hover { background: #4c4e4f; }
 
 .presentation-exit {
   border: 0;
@@ -28,24 +28,11 @@
 
 .presentation-exit:hover { color: #bf5739; }
 
-.lottery-card.spinning .orbit-one { animation: orbit-spin 1.2s linear infinite; }
-.lottery-card.spinning .orbit-two { animation: orbit-spin 2.1s linear infinite reverse; }
-.lottery-card.spinning .orbit::before {
-  content: '';
-  position: absolute;
-  width: 11px;
-  height: 11px;
-  left: calc(50% - 5px);
-  top: -6px;
-  border-radius: 50%;
-  background: #d86745;
-  box-shadow: 0 0 17px #e69a70;
-}
-.lottery-card.spinning .orbit-two::before {
-  width: 8px;
-  height: 8px;
-  background: #eab18c;
-}
+.lottery-center::after { content: none; }
+.draw-button span:last-child { margin: 0; font-size: inherit; font-weight: inherit; }
+.save-indicator::before { content: none; }
+.lottery-card.spinning .orbit-one { animation: orbit-spin 1.2s linear infinite; border: 2px dashed #d86745; }
+.lottery-card.spinning .orbit-two { animation: orbit-spin 2.1s linear infinite reverse; border: 2px dashed #eab18c; }
 .lottery-card.spinning .result-name { animation: roulette-pulse .24s ease-in-out infinite alternate; }
 
 @keyframes orbit-spin { to { transform: rotate(360deg); } }

@@ -31,13 +31,9 @@ function renderProjects() {
     button.type = 'button';
     button.className = `project-item${project.id === state.activeId ? ' active' : ''}`;
     button.setAttribute('aria-current', project.id === state.activeId ? 'page' : 'false');
-    const icon = document.createElement('span');
-    icon.className = 'project-icon';
-    icon.setAttribute('aria-hidden', 'true');
-    icon.textContent = '▦';
     const label = document.createElement('span');
     label.textContent = `${project.course} · ${project.year}`;
-    button.append(icon, label);
+    button.append(label);
     button.addEventListener('click', () => {
       state.activeId = project.id;
       persist();
