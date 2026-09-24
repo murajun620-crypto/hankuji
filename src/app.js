@@ -1,4 +1,4 @@
-import { createProject, drawGroup, drawState, groupNames, MAX_GROUPS, readStore, saveStore, validateCustomNames } from './lottery.js';
+import { createProject, drawGroup, drawState, groupNames, MAX_GROUPS, readStore, saveStore, validateCustomNames, withoutProject } from './lottery.js';
 
 const $ = id => document.getElementById(id);
 const state = readStore();
@@ -261,7 +261,6 @@ function openProjectDialog(mode) {
   $('course-name').value = mode === 'edit' ? project.course : '';
   $('course-year').value = mode === 'edit' ? project.year : new Date().getFullYear();
   $('project-error').textContent = '';
-  $('delete-project').hidden = mode !== 'edit';
   $('project-dialog').showModal();
   $('course-name').focus();
 }
@@ -285,10 +284,23 @@ $('project-form').addEventListener('submit', event => {
 });
 $('delete-project').addEventListener('click', () => {
   const project = activeProject();
-  if (!project || !confirm(`「${project.course}・${project.year}年度」を削除しますか？\n設定と指名履歴も削除されます。`)) return;
-  state.projects = state.projects.filter(item => item.id !== project.id);
-  state.activeId = state.projects[0]?.id || null;
-  persist(); closeProjectDialog(); closeHistory(); render(); toast('プロジェクトを削除しました');
+  if (!project) return;
+  $('delete-project-name').textContent = `${project.course} ・ ${project.year}年度`;
+  $('delete-error').textContent = '';
+  $('delete-dialog').showModal();
+  $('cancel-delete').focus();
+});
+$('cancel-delete').addEventListener('click', () => $('delete-dialog').close());
+$('confirm-delete').addEventListener('click', () => {
+  const project = activeProject();
+  if (!project) { $('delete-dialog').close(); return; }
+  const nextState = withoutProject(state, project.id);
+  try { saveStore(nextState); }
+  catch { $('delete-error').textContent = '削除できませんでした。ブラウザの保存設定をご確認ください。'; return; }
+  state.projects = nextState.projects;
+  state.activeId = nextState.activeId;
+  $('delete-dialog').close();
+  render(); toast('プロジェクトを削除しました');
 });
 $('group-count').addEventListener('change', event => setNumber('group-count', 1, MAX_GROUPS, 'groupCount', event.target.value));
 $('count-decrease').addEventListener('click', () => stepNumber('group-count', 1, MAX_GROUPS, 'groupCount', -1));

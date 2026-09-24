@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createProject, drawGroup, drawState, groupNames, readStore, saveStore, validateCustomNames } from '../src/lottery.js';
+import { createProject, drawGroup, drawState, groupNames, readStore, saveStore, validateCustomNames, withoutProject } from '../src/lottery.js';
 
 test('名称パターンと自由入力を生成する', () => {
   const project = createProject('授業', 2026, 'p1');
@@ -50,4 +50,17 @@ test('プロジェクト別の状態を保存・読み込みできる', () => {
   assert.equal(loaded.activeId, 'second');
   assert.equal(loaded.projects[0].history.length, 1);
   assert.equal(loaded.projects[1].history.length, 0);
+});
+
+test('削除したプロジェクトの履歴だけを除き、次のプロジェクトを選ぶ', () => {
+  const first = createProject('国語', 2026, 'first');
+  const second = createProject('数学', 2026, 'second');
+  drawGroup(first, () => 0);
+  drawGroup(second, () => 0);
+  const state = { projects: [first, second], activeId: 'first' };
+  const afterFirst = withoutProject(state, 'first');
+  assert.deepEqual(afterFirst.projects.map(project => project.id), ['second']);
+  assert.equal(afterFirst.projects[0].history.length, 1);
+  assert.equal(afterFirst.activeId, 'second');
+  assert.deepEqual(withoutProject(afterFirst, 'second'), { projects: [], activeId: null });
 });

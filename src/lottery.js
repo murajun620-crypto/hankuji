@@ -63,3 +63,8 @@ export function readStore(storage = localStorage) {
 export function saveStore(state, storage = localStorage) {
   storage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
+
+export function withoutProject(state, id) {
+  const projects = state.projects.filter(project => project.id !== id);
+  return { projects, activeId: state.activeId === id ? projects[0]?.id || null : state.activeId };
+}

@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#f6f3ec">
     <meta name="description" content="授業ごとに発表班を公平に抽選する、シンプルなブラウザアプリ。">
     <title>NEXT Group | 発表班の抽選</title>
-    <link rel="stylesheet" href="./styles.css?v=20260924-6">
-    <link rel="stylesheet" href="./presentation.css?v=20260924-6">
-    <script type="module" src="./src/app.js?v=20260924-6"></script>
+    <link rel="stylesheet" href="./styles.css?v=20260924-7">
+    <link rel="stylesheet" href="./presentation.css?v=20260924-7">
+    <script type="module" src="./src/app.js?v=20260924-7"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -70,7 +70,7 @@
                   <div class="field"><label for="max-calls">各班の最大指名回数</label><div class="number-stepper"><button id="max-decrease" type="button" aria-label="最大指名回数を減らす">−</button><input id="max-calls" type="number" min="1" max="100" inputmode="numeric"><button id="max-increase" type="button" aria-label="最大指名回数を増やす">＋</button></div><p class="field-help">上限に達した班は抽選対象から外れます</p></div>
                   <label class="toggle-row" for="round-robin"><span><strong>1巡するまで重複なし</strong><small>すべての班が1回ずつ当たってから、次の巡へ</small></span><span class="switch"><input id="round-robin" type="checkbox"><span class="slider"></span></span></label>
                 </div>
-                <div class="settings-footer"><span class="save-indicator" id="save-indicator">変更は自動保存されます</span></div>
+                <div class="settings-footer"><span class="save-indicator" id="save-indicator">変更は自動保存されます</span><button class="danger-text-button" id="delete-project" type="button">プロジェクトを削除</button></div>
               </aside>
             </div>
           </div>
@@ -89,8 +89,13 @@
     <dialog id="project-dialog" class="project-dialog" aria-labelledby="dialog-title">
       <form id="project-form" novalidate><div class="dialog-header"><div><p class="eyebrow">PROJECT</p><h2 id="dialog-title">プロジェクトを作成</h2></div><button class="icon-button" id="close-project-dialog" type="button" aria-label="閉じる">×</button></div>
         <div class="dialog-fields"><div class="field"><label for="course-name">授業名</label><input id="course-name" name="courseName" type="text" maxlength="60" placeholder="例：ゼミナール" required></div><div class="field"><label for="course-year">年度</label><input id="course-year" name="courseYear" type="number" min="2000" max="2100" required></div><p class="field-error" id="project-error" role="alert"></p></div>
-        <div class="dialog-footer"><button class="danger-text-button" id="delete-project" type="button" hidden>このプロジェクトを削除</button><button class="primary-button" id="save-project" type="submit">保存する</button></div>
+        <div class="dialog-footer"><button class="primary-button" id="save-project" type="submit">保存する</button></div>
       </form>
+    </dialog>
+    <dialog id="delete-dialog" class="project-dialog" aria-labelledby="delete-dialog-title">
+      <div class="dialog-header"><div><p class="eyebrow">PROJECT</p><h2 id="delete-dialog-title">プロジェクトを削除</h2></div></div>
+      <div class="dialog-fields"><p class="delete-project-name" id="delete-project-name"></p><p class="delete-warning">このプロジェクトの設定と指名履歴も削除されます。元に戻せません。</p><p class="field-error" id="delete-error" role="alert"></p></div>
+      <div class="dialog-footer"><button class="secondary-button" id="cancel-delete" type="button">キャンセル</button><button class="danger-button" id="confirm-delete" type="button">削除する</button></div>
     </dialog>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   </body>

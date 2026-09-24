@@ -28,6 +28,13 @@
 
 .presentation-exit:hover { color: #bf5739; }
 
+.settings-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.settings-footer .danger-text-button { margin-left: auto; white-space: nowrap; }
+.delete-project-name { margin: 0 0 10px; font-size: 16px; font-weight: 800; overflow-wrap: anywhere; }
+.delete-warning { margin: 0 0 16px; color: #6f746c; font-size: 12px; line-height: 1.8; }
+.danger-button { border: 0; border-radius: 8px; padding: 12px 18px; background: #b95f4f; color: #fff; font-size: 12px; font-weight: 800; }
+.danger-button:hover { background: #a64d3e; }
+
 .lottery-center::after { content: none; }
 .draw-button span:last-child { margin: 0; font-size: inherit; font-weight: inherit; }
 .save-indicator::before { content: none; }
