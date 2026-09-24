@@ -1,4 +1,5 @@
-import { createProject, drawGroup, drawState, groupNames, MAX_GROUPS, readStore, saveStore, validateCustomNames, withoutProject } from './lottery.js?v=20260924-8';
+import { createProject, drawGroup, drawState, groupNames, MAX_GROUPS, readStore, saveStore, validateCustomNames, withoutProject } from './lottery.js?v=20260924-9';
+import { BACKUP_FILENAME, createBackup, parseBackup } from './backup.js?v=20260924-9';
 
 const $ = id => document.getElementById(id);
 const state = readStore();
@@ -9,6 +10,7 @@ let presentationMode = false;
 let spinning = false;
 let spinTimer = null;
 let spinGeneration = 0;
+let pendingImport = null;
 const dateTime = new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 
 function activeProject() { return state.projects.find(project => project.id === state.activeId) || null; }
@@ -254,6 +256,60 @@ function exportHistory() {
   document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+function downloadBackup(file) {
+  const url = URL.createObjectURL(file);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = BACKUP_FILENAME;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast('ファイルをダウンロードしました。OneDriveに保存してください。');
+}
+
+async function saveBackup() {
+  const content = createBackup(state);
+  const file = new File([content], BACKUP_FILENAME, { type: 'text/plain' });
+  if (typeof window.showSaveFilePicker === 'function') {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: BACKUP_FILENAME,
+        types: [{ description: 'NEXT Group 保存データ', accept: { 'text/plain': ['.txt'] } }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      toast('保存しました。');
+    } catch (error) {
+      if (error?.name !== 'AbortError') toast('保存できませんでした。もう一度お試しください。');
+    }
+    return;
+  }
+  if (typeof navigator.share === 'function' && navigator.canShare?.({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: 'NEXT Group 保存データ' }); }
+    catch (error) { if (error?.name !== 'AbortError') toast('共有できませんでした。もう一度お試しください。'); }
+    return;
+  }
+  downloadBackup(file);
+}
+
+async function openBackupFile(file) {
+  if (!file) return;
+  pendingImport = null;
+  if (file.size > 20_000_000) { toast('ファイルが大きすぎます。'); return; }
+  try {
+    const loaded = parseBackup(await file.text());
+    pendingImport = loaded.state;
+    $('import-summary').textContent = `${loaded.state.projects.length}件のプロジェクト・指名履歴${loaded.historyCount}件\n保存日時：${dateTime.format(new Date(loaded.savedAt))}`;
+    $('import-error').textContent = '';
+    $('import-dialog').showModal();
+    $('cancel-import').focus();
+  } catch (error) {
+    toast(error instanceof Error ? error.message : 'ファイルを開けませんでした。');
+  }
+}
+
 function openProjectDialog(mode) {
   dialogMode = mode;
   const project = activeProject();
@@ -301,6 +357,27 @@ $('confirm-delete').addEventListener('click', () => {
   state.activeId = nextState.activeId;
   $('delete-dialog').close();
   render(); toast('プロジェクトを削除しました');
+});
+$('save-backup').addEventListener('click', saveBackup);
+for (const id of ['open-backup', 'empty-open-backup']) $(id).addEventListener('click', () => $('backup-file').click());
+$('backup-file').addEventListener('change', event => {
+  const file = event.target.files?.[0];
+  event.target.value = '';
+  void openBackupFile(file);
+});
+$('cancel-import').addEventListener('click', () => { pendingImport = null; $('import-dialog').close(); });
+$('import-dialog').addEventListener('close', () => { pendingImport = null; });
+$('confirm-import').addEventListener('click', () => {
+  if (!pendingImport) return;
+  try { saveStore(pendingImport); }
+  catch { $('import-error').textContent = '読み込めませんでした。ブラウザの保存設定をご確認ください。'; return; }
+  state.projects = pendingImport.projects;
+  state.activeId = pendingImport.activeId;
+  pendingImport = null;
+  $('import-dialog').close();
+  $('sidebar').classList.remove('open');
+  render();
+  toast('保存データを読み込みました。');
 });
 $('group-count').addEventListener('change', event => setNumber('group-count', 1, MAX_GROUPS, 'groupCount', event.target.value));
 $('count-decrease').addEventListener('click', () => stepNumber('group-count', 1, MAX_GROUPS, 'groupCount', -1));

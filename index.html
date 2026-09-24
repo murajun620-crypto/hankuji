@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#f6f3ec">
     <meta name="description" content="授業ごとに発表班を公平に抽選する、シンプルなブラウザアプリ。">
     <title>NEXT Group | 発表班の抽選</title>
-    <link rel="stylesheet" href="./styles.css?v=20260924-8">
-    <link rel="stylesheet" href="./presentation.css?v=20260924-8">
-    <script type="module" src="./src/app.js?v=20260924-8"></script>
+    <link rel="stylesheet" href="./styles.css?v=20260924-9">
+    <link rel="stylesheet" href="./presentation.css?v=20260924-9">
+    <script type="module" src="./src/app.js?v=20260924-9"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -23,7 +23,8 @@
           <div class="sidebar-heading"><span>MY PROJECTS</span><button class="small-icon-button" id="new-project" type="button" aria-label="プロジェクトを追加">＋</button></div>
           <nav id="project-list" class="project-list" aria-label="プロジェクト一覧"></nav>
           <p class="sidebar-note">授業と年度ごとに設定・履歴を保存します。</p>
-          <div class="sidebar-bottom">データはこのブラウザに保存</div>
+          <div class="backup-panel"><h2>データの共有</h2><p>全プロジェクトと指名履歴をファイルにまとめます。</p><div class="backup-actions"><button id="save-backup" type="button">保存</button><button id="open-backup" type="button">開く</button></div><p>別端末では同じファイルを「開く」。変更後は再び「保存」してください。</p></div>
+          <div class="sidebar-bottom">データはこのブラウザにも自動保存</div>
         </aside>
 
         <main class="main-content" id="main-content">
@@ -32,6 +33,7 @@
             <h1>まずは授業を登録しましょう。</h1>
             <p>授業と年度ごとに、抽選設定と指名履歴を分けて管理できます。</p>
             <button class="primary-button" id="empty-create" type="button">最初のプロジェクトを作成</button>
+            <button class="secondary-button" id="empty-open-backup" type="button">保存データを開く</button>
           </section>
 
           <div id="project-workspace" hidden>
@@ -97,6 +99,12 @@
       <div class="dialog-fields"><p class="delete-project-name" id="delete-project-name"></p><p class="delete-warning">このプロジェクトの設定と指名履歴も削除されます。元に戻せません。</p><p class="field-error" id="delete-error" role="alert"></p></div>
       <div class="dialog-footer"><button class="secondary-button" id="cancel-delete" type="button">キャンセル</button><button class="danger-button" id="confirm-delete" type="button">削除する</button></div>
     </dialog>
+    <dialog id="import-dialog" class="project-dialog" aria-labelledby="import-dialog-title">
+      <div class="dialog-header"><div><p class="eyebrow">DATA</p><h2 id="import-dialog-title">保存データを開く</h2></div></div>
+      <div class="dialog-fields"><p class="import-summary" id="import-summary"></p><p class="delete-warning">この端末の全プロジェクトと指名履歴を、ファイルの内容に置き換えます。必要なら先に「保存」してください。</p><p class="field-error" id="import-error" role="alert"></p></div>
+      <div class="dialog-footer"><button class="secondary-button" id="cancel-import" type="button">キャンセル</button><button class="primary-button" id="confirm-import" type="button">読み込む</button></div>
+    </dialog>
+    <input id="backup-file" type="file" accept=".txt,.json,text/plain,application/json" hidden>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   </body>
 </html>

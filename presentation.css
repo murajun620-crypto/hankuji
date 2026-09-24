@@ -35,6 +35,17 @@
 .danger-button { border: 0; border-radius: 8px; padding: 12px 18px; background: #b95f4f; color: #fff; font-size: 12px; font-weight: 800; }
 .danger-button:hover { background: #a64d3e; }
 
+.sidebar { overflow-y: auto; }
+.backup-panel { border-top: 1px solid #e5e5dc; margin: 20px 0 0; padding: 18px 18px 8px; }
+.backup-panel h2 { margin: 0 0 8px; color: #39433e; font-size: 13px; font-weight: 800; }
+.backup-panel p { margin: 0 0 12px; color: #7b8179; font-size: 11px; line-height: 1.7; }
+.backup-actions { display: flex; gap: 8px; margin-bottom: 12px; }
+.backup-actions button { flex: 1; border: 1px solid #cbd6ce; border-radius: 8px; padding: 10px; background: #fff; color: #275c45; font-size: 12px; font-weight: 800; }
+.backup-actions button:first-child { background: #276b4f; border-color: #276b4f; color: #fff; }
+.backup-actions button:hover { filter: brightness(.94); }
+.empty-state .secondary-button { margin: 10px 0 0 8px; }
+.import-summary { margin: 0 0 12px; white-space: pre-line; font-size: 14px; font-weight: 750; line-height: 1.7; }
+
 .lottery-center::after { content: none; }
 .draw-button span:last-child { margin: 0; font-size: inherit; font-weight: inherit; }
 .save-indicator::before { content: none; }
