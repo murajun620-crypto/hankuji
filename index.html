@@ -7,6 +7,7 @@
     <meta name="description" content="授業ごとに発表班を公平に抽選する、シンプルなブラウザアプリ。">
     <title>班くじ | 発表班の抽選</title>
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./presentation.css">
     <script type="module" src="./src/app.js"></script>
   </head>
   <body>
@@ -37,13 +38,13 @@
           <div id="project-workspace" hidden>
             <div class="page-heading">
               <div><p class="eyebrow">PRESENTATION LOTTERY</p><h1 id="project-title"></h1><p class="project-subtitle" id="project-subtitle"></p></div>
-              <button class="text-button" id="edit-project" type="button">プロジェクト名を編集 <span aria-hidden="true">↗</span></button>
+              <div class="page-actions"><button class="text-button" id="edit-project" type="button">プロジェクト名を編集 <span aria-hidden="true">↗</span></button><button class="presentation-button" id="student-view" type="button" aria-pressed="false">▣ 学生表示</button></div>
             </div>
 
             <div class="content-grid">
               <div class="primary-column">
-                <section class="lottery-card" aria-labelledby="lottery-title">
-                  <div class="card-topline"><span class="pill"><span class="live-dot"></span> 抽選ボード</span><button class="history-link" id="open-history" type="button">履歴を見る <span aria-hidden="true">↗</span></button></div>
+                <section class="lottery-card" id="lottery-card" aria-label="抽選ボード">
+                  <div class="card-topline"><span class="pill"><span class="live-dot"></span> <span id="board-label">抽選ボード</span></span><button class="history-link" id="open-history" type="button">履歴を見る <span aria-hidden="true">↗</span></button><button class="presentation-exit" id="exit-student-view" type="button" aria-label="先生画面に戻る" hidden>× <span>先生画面へ</span></button></div>
                   <div class="lottery-center">
                     <div class="orbit orbit-one" aria-hidden="true"></div><div class="orbit orbit-two" aria-hidden="true"></div>
                     <div class="result-content">

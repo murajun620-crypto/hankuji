@@ -5,6 +5,10 @@ const state = readStore();
 let dialogMode = 'new';
 let toastTimer;
 let lastDrawerFocus = null;
+let presentationMode = false;
+let spinning = false;
+let spinTimer = null;
+let spinGeneration = 0;
 const dateTime = new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 
 function activeProject() { return state.projects.find(project => project.id === state.activeId) || null; }
@@ -82,14 +86,25 @@ function renderResult(project) {
   $('result-kicker').textContent = last ? 'SELECTED GROUP' : 'NEXT UP';
   $('result-name').textContent = last ? last.groupName : '？';
   $('result-name').classList.toggle('long', Boolean(last && last.groupName.length > 5));
-  $('result-description').textContent = last ? `${dateTime.format(new Date(last.at))} に指名しました` : 'ボタンを押して発表班を決めましょう';
+  $('result-description').textContent = last ? presentationMode ? '発表をお願いします！' : `${dateTime.format(new Date(last.at))} に指名しました` : 'ボタンを押して発表班を決めましょう';
   $('draw-button').disabled = draw.candidates.length === 0;
   $('draw-button-label').textContent = draw.candidates.length ? '抽選する' : '抽選終了';
   $('draw-hint').textContent = draw.candidates.length ? `${draw.candidates.length} 班が抽選対象 · ${project.roundRobin ? '1巡するまで重複なし' : '重複あり'}` : 'すべての班が指名上限に達しました';
   renderGroups(project, groupNames(project), draw);
 }
 
+function cancelSpin() {
+  spinGeneration++;
+  clearTimeout(spinTimer);
+  spinTimer = null;
+  spinning = false;
+  $('lottery-card').classList.remove('spinning');
+  $('result-name').setAttribute('aria-live', 'polite');
+  $('open-history').disabled = false;
+}
+
 function render() {
+  cancelSpin();
   renderProjects();
   const project = activeProject();
   $('empty-state').hidden = Boolean(project);
@@ -100,6 +115,66 @@ function render() {
   renderSettings(project);
   renderResult(project);
   if (!$('history-drawer').hidden) renderHistory();
+}
+
+function setPresentationMode(enabled) {
+  presentationMode = enabled;
+  if (enabled && !$('history-drawer').hidden) closeHistory();
+  document.body.classList.toggle('presentation-mode', enabled);
+  $('student-view').setAttribute('aria-pressed', String(enabled));
+  $('exit-student-view').hidden = !enabled;
+  $('board-label').textContent = enabled ? `${activeProject()?.course || ''} · ${activeProject()?.year || ''}年度` : '抽選ボード';
+  if (!spinning && activeProject()) renderResult(activeProject());
+  if (enabled) $('draw-button').focus();
+  else $('student-view').focus();
+}
+
+function startSpin(project) {
+  if (spinning) return;
+  const candidates = drawState(project).candidates.map(index => groupNames(project)[index]);
+  if (!candidates.length) return;
+  const entry = drawGroup(project);
+  if (!entry) return;
+  persist();
+  spinning = true;
+  const generation = ++spinGeneration;
+  const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 650 : 2500;
+  const started = performance.now();
+  const offset = Math.floor(Math.random() * candidates.length);
+  let step = 0;
+  $('lottery-card').classList.add('spinning');
+  $('result-name').classList.remove('reveal');
+  $('result-name').setAttribute('aria-live', 'off');
+  $('result-name').textContent = '？';
+  $('result-kicker').textContent = 'ROULETTE';
+  $('result-description').textContent = 'どの班になるでしょう？';
+  $('draw-button').disabled = true;
+  $('draw-button-label').textContent = '抽選中…';
+  $('open-history').disabled = true;
+  $('draw-hint').textContent = '抽選中です。結果をお待ちください';
+
+  function tick() {
+    if (generation !== spinGeneration || state.activeId !== project.id) return;
+    const progress = (performance.now() - started) / duration;
+    if (progress >= 1) {
+      spinning = false;
+      spinTimer = null;
+      $('lottery-card').classList.remove('spinning');
+      $('result-name').setAttribute('aria-live', 'polite');
+      $('open-history').disabled = false;
+      renderResult(project);
+      $('result-name').classList.remove('reveal');
+      void $('result-name').offsetWidth;
+      $('result-name').classList.add('reveal');
+      return;
+    }
+    const label = candidates.length === 1 && step % 2 ? '？' : candidates[(offset + step) % candidates.length];
+    $('result-name').textContent = label;
+    $('result-name').classList.toggle('long', label.length > 5);
+    step++;
+    spinTimer = setTimeout(tick, 65 + Math.pow(progress, 2) * 300);
+  }
+  spinTimer = setTimeout(tick, 130);
 }
 
 function updateProject(mutate, rerender = true) {
@@ -233,6 +308,7 @@ $('name-pattern').addEventListener('change', event => {
   });
 });
 $('custom-names').addEventListener('input', event => {
+  if (spinning) cancelSpin();
   const project = activeProject();
   const names = event.target.value.split(/\r?\n/).map(name => name.trim());
   const error = validateCustomNames(names, project.groupCount);
@@ -243,16 +319,11 @@ $('custom-names').addEventListener('input', event => {
   renderResult(project);
 });
 $('round-robin').addEventListener('change', event => updateProject(project => { project.roundRobin = event.target.checked; }));
+$('student-view').addEventListener('click', () => setPresentationMode(true));
+$('exit-student-view').addEventListener('click', () => setPresentationMode(false));
 $('draw-button').addEventListener('click', () => {
   const project = activeProject();
-  if (!project) return;
-  const entry = drawGroup(project);
-  if (!entry) return;
-  persist(); renderResult(project);
-  $('result-name').classList.remove('reveal');
-  void $('result-name').offsetWidth;
-  $('result-name').classList.add('reveal');
-  if (!$('history-drawer').hidden) renderHistory();
+  if (project) startSpin(project);
 });
 $('open-history').addEventListener('click', openHistory);
 $('close-history').addEventListener('click', closeHistory);
@@ -264,5 +335,9 @@ $('clear-history').addEventListener('click', () => {
   project.history = []; persist(); renderResult(project); renderHistory(); toast('指名履歴を削除しました');
 });
 $('mobile-projects').addEventListener('click', () => $('sidebar').classList.toggle('open'));
-document.addEventListener('keydown', event => { if (event.key === 'Escape' && !$('history-drawer').hidden) closeHistory(); });
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  if (!$('history-drawer').hidden) closeHistory();
+  else if (presentationMode) setPresentationMode(false);
+});
 render();

@@ -1,0 +1,115 @@
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.presentation-button {
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 17px;
+  background: #343c34;
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.presentation-button:hover { background: #4c594d; }
+
+.presentation-exit {
+  border: 0;
+  background: transparent;
+  color: #858b82;
+  padding: 6px 0;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.presentation-exit:hover { color: #bf5739; }
+
+.lottery-card.spinning .orbit-one { animation: orbit-spin 1.2s linear infinite; }
+.lottery-card.spinning .orbit-two { animation: orbit-spin 2.1s linear infinite reverse; }
+.lottery-card.spinning .orbit::before {
+  content: '';
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  left: calc(50% - 5px);
+  top: -6px;
+  border-radius: 50%;
+  background: #d86745;
+  box-shadow: 0 0 17px #e69a70;
+}
+.lottery-card.spinning .orbit-two::before {
+  width: 8px;
+  height: 8px;
+  background: #eab18c;
+}
+.lottery-card.spinning .result-name { animation: roulette-pulse .24s ease-in-out infinite alternate; }
+
+@keyframes orbit-spin { to { transform: rotate(360deg); } }
+@keyframes roulette-pulse { to { transform: scale(1.06); opacity: .72; } }
+
+.presentation-mode .topbar,
+.presentation-mode .sidebar,
+.presentation-mode .page-heading,
+.presentation-mode .groups-section,
+.presentation-mode .settings-card,
+.presentation-mode .history-link,
+.presentation-mode .draw-hint {
+  display: none !important;
+}
+
+.presentation-mode .layout { display: block; min-height: 100dvh; }
+.presentation-mode .main-content {
+  max-width: none;
+  min-height: 100dvh;
+  padding: 18px;
+}
+.presentation-mode #project-workspace,
+.presentation-mode .content-grid,
+.presentation-mode .primary-column { width: 100%; height: 100%; }
+.presentation-mode .content-grid { display: block; }
+.presentation-mode .lottery-card {
+  min-height: calc(100dvh - 36px);
+  border-radius: 20px;
+}
+.presentation-mode .card-topline { padding: 28px 34px 0; }
+.presentation-mode .pill { font-size: 13px; padding: 10px 14px; }
+.presentation-mode .lottery-center { flex: 1; min-height: 320px; }
+.presentation-mode .lottery-center::after { font-size: min(27vw, 390px); }
+.presentation-mode .orbit-one { width: min(38vw, 380px); height: min(38vw, 380px); }
+.presentation-mode .orbit-two { width: min(54vw, 540px); height: min(54vw, 540px); }
+.presentation-mode .result-kicker { font-size: 14px; margin-bottom: 12px; }
+.presentation-mode .result-name {
+  font-size: clamp(90px, 18vw, 180px);
+  min-height: 190px;
+  max-width: 75vw;
+}
+.presentation-mode .result-name.long { font-size: clamp(50px, 8vw, 95px); }
+.presentation-mode .result-description { font-size: 19px; }
+.presentation-mode .lottery-actions { width: min(740px, 100%); margin: 0 auto; padding-bottom: 35px; }
+.presentation-mode .draw-button { height: 76px; font-size: 21px; }
+
+@media (max-width: 740px) {
+  .page-actions { flex-direction: column-reverse; align-items: end; gap: 2px; }
+  .presentation-button { padding: 9px 11px; font-size: 11px; }
+  .presentation-mode .main-content { padding: 9px; }
+  .presentation-mode .lottery-card { min-height: calc(100dvh - 18px); }
+  .presentation-mode .card-topline { padding: 20px 20px 0; }
+  .presentation-mode .pill { font-size: 10px; }
+  .presentation-mode .lottery-center { min-height: 270px; }
+  .presentation-mode .orbit-one { width: 220px; height: 220px; }
+  .presentation-mode .orbit-two { width: 330px; height: 330px; }
+  .presentation-mode .result-name { font-size: clamp(72px, 24vw, 130px); min-height: 100px; }
+  .presentation-mode .result-name.long { font-size: clamp(38px, 11vw, 65px); }
+  .presentation-mode .result-description { font-size: 14px; }
+  .presentation-mode .lottery-actions { padding: 0 20px 24px; }
+  .presentation-mode .draw-button { height: 62px; font-size: 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lottery-card.spinning .orbit,
+  .lottery-card.spinning .result-name { animation-duration: .01ms; }
+}
