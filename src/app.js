@@ -1,4 +1,4 @@
-import { createProject, drawGroup, drawState, groupNames, MAX_GROUPS, readStore, saveStore, validateCustomNames, withoutProject } from './lottery.js';
+import { createProject, drawGroup, drawState, groupNames, MAX_GROUPS, readStore, saveStore, validateCustomNames, withoutProject } from './lottery.js?v=20260924-8';
 
 const $ = id => document.getElementById(id);
 const state = readStore();
